@@ -89,7 +89,7 @@ Let's inspect these 13 features using `.describe()` and `.info()`
 # code here
 ```
 
-Now, take a look at the scatter plots for each predictor with the target on the y-axis
+Now, take a look at the scatter plots for each predictor with the target on the y-axis.
 
 
 ```python
