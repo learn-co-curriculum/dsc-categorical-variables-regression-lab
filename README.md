@@ -450,7 +450,7 @@ boston_df.head()
 
 
 
-Let's inspect these 13 features using `.describe()` and `.info`
+Let's inspect these 13 features using `.describe()` and `.info()`
 
 
 ```python
@@ -653,7 +653,7 @@ boston_features.info()
     memory usage: 51.5 KB
 
 
-Now, take a look at the scatter plots with the
+Now, take a look at the scatter plots for each predictor with the target on the y-axis.
 
 
 ```python
