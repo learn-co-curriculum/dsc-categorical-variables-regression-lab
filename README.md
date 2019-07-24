@@ -86,7 +86,7 @@ print(boston)
            29.8, 13.8, 13.3, 16.7, 12. , 14.6, 21.4, 23. , 23.7, 25. , 21.8,
            20.6, 21.2, 19.1, 20.6, 15.2,  7. ,  8.1, 13.6, 20.1, 21.8, 24.5,
            23.1, 19.7, 18.3, 21.2, 17.5, 16.8, 22.4, 20.6, 23.9, 22. , 11.9]), 'feature_names': array(['CRIM', 'ZN', 'INDUS', 'CHAS', 'NOX', 'RM', 'AGE', 'DIS', 'RAD',
-           'TAX', 'PTRATIO', 'B', 'LSTAT'], dtype='<U7'), 'DESCR': "Boston House Prices dataset\n===========================\n\nNotes\n------\nData Set Characteristics:  \n\n    :Number of Instances: 506 \n\n    :Number of Attributes: 13 numeric/categorical predictive\n    \n    :Median Value (attribute 14) is usually the target\n\n    :Attribute Information (in order):\n        - CRIM     per capita crime rate by town\n        - ZN       proportion of residential land zoned for lots over 25,000 sq.ft.\n        - INDUS    proportion of non-retail business acres per town\n        - CHAS     Charles River dummy variable (= 1 if tract bounds river; 0 otherwise)\n        - NOX      nitric oxides concentration (parts per 10 million)\n        - RM       average number of rooms per dwelling\n        - AGE      proportion of owner-occupied units built prior to 1940\n        - DIS      weighted distances to five Boston employment centres\n        - RAD      index of accessibility to radial highways\n        - TAX      full-value property-tax rate per $10,000\n        - PTRATIO  pupil-teacher ratio by town\n        - B        1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town\n        - LSTAT    % lower status of the population\n        - MEDV     Median value of owner-occupied homes in $1000's\n\n    :Missing Attribute Values: None\n\n    :Creator: Harrison, D. and Rubinfeld, D.L.\n\nThis is a copy of UCI ML housing dataset.\nhttp://archive.ics.uci.edu/ml/datasets/Housing\n\n\nThis dataset was taken from the StatLib library which is maintained at Carnegie Mellon University.\n\nThe Boston house-price data of Harrison, D. and Rubinfeld, D.L. 'Hedonic\nprices and the demand for clean air', J. Environ. Economics & Management,\nvol.5, 81-102, 1978.   Used in Belsley, Kuh & Welsch, 'Regression diagnostics\n...', Wiley, 1980.   N.B. Various transformations are used in the table on\npages 244-261 of the latter.\n\nThe Boston house-price data has been used in many machine learning papers that address regression\nproblems.   \n     \n**References**\n\n   - Belsley, Kuh & Welsch, 'Regression diagnostics: Identifying Influential Data and Sources of Collinearity', Wiley, 1980. 244-261.\n   - Quinlan,R. (1993). Combining Instance-Based and Model-Based Learning. In Proceedings on the Tenth International Conference of Machine Learning, 236-243, University of Massachusetts, Amherst. Morgan Kaufmann.\n   - many more! (see http://archive.ics.uci.edu/ml/datasets/Housing)\n"}
+           'TAX', 'PTRATIO', 'B', 'LSTAT'], dtype='<U7'), 'DESCR': ".. _boston_dataset:\n\nBoston house prices dataset\n---------------------------\n\n**Data Set Characteristics:**  \n\n    :Number of Instances: 506 \n\n    :Number of Attributes: 13 numeric/categorical predictive. Median Value (attribute 14) is usually the target.\n\n    :Attribute Information (in order):\n        - CRIM     per capita crime rate by town\n        - ZN       proportion of residential land zoned for lots over 25,000 sq.ft.\n        - INDUS    proportion of non-retail business acres per town\n        - CHAS     Charles River dummy variable (= 1 if tract bounds river; 0 otherwise)\n        - NOX      nitric oxides concentration (parts per 10 million)\n        - RM       average number of rooms per dwelling\n        - AGE      proportion of owner-occupied units built prior to 1940\n        - DIS      weighted distances to five Boston employment centres\n        - RAD      index of accessibility to radial highways\n        - TAX      full-value property-tax rate per $10,000\n        - PTRATIO  pupil-teacher ratio by town\n        - B        1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town\n        - LSTAT    % lower status of the population\n        - MEDV     Median value of owner-occupied homes in $1000's\n\n    :Missing Attribute Values: None\n\n    :Creator: Harrison, D. and Rubinfeld, D.L.\n\nThis is a copy of UCI ML housing dataset.\nhttps://archive.ics.uci.edu/ml/machine-learning-databases/housing/\n\n\nThis dataset was taken from the StatLib library which is maintained at Carnegie Mellon University.\n\nThe Boston house-price data of Harrison, D. and Rubinfeld, D.L. 'Hedonic\nprices and the demand for clean air', J. Environ. Economics & Management,\nvol.5, 81-102, 1978.   Used in Belsley, Kuh & Welsch, 'Regression diagnostics\n...', Wiley, 1980.   N.B. Various transformations are used in the table on\npages 244-261 of the latter.\n\nThe Boston house-price data has been used in many machine learning papers that address regression\nproblems.   \n     \n.. topic:: References\n\n   - Belsley, Kuh & Welsch, 'Regression diagnostics: Identifying Influential Data and Sources of Collinearity', Wiley, 1980. 244-261.\n   - Quinlan,R. (1993). Combining Instance-Based and Model-Based Learning. In Proceedings on the Tenth International Conference of Machine Learning, 236-243, University of Massachusetts, Amherst. Morgan Kaufmann.\n", 'filename': '/Users/forest.polchow/anaconda3/lib/python3.6/site-packages/sklearn/datasets/data/boston_house_prices.csv'}
 
 
 
@@ -97,7 +97,7 @@ boston.keys()
 
 
 
-    dict_keys(['data', 'target', 'feature_names', 'DESCR'])
+    dict_keys(['data', 'target', 'feature_names', 'DESCR', 'filename'])
 
 
 
@@ -512,7 +512,7 @@ boston_features.describe()
     </tr>
     <tr>
       <th>mean</th>
-      <td>3.593761</td>
+      <td>3.613524</td>
       <td>11.363636</td>
       <td>11.136779</td>
       <td>0.069170</td>
@@ -528,7 +528,7 @@ boston_features.describe()
     </tr>
     <tr>
       <th>std</th>
-      <td>8.596783</td>
+      <td>8.601545</td>
       <td>23.322453</td>
       <td>6.860353</td>
       <td>0.253994</td>
@@ -592,7 +592,7 @@ boston_features.describe()
     </tr>
     <tr>
       <th>75%</th>
-      <td>3.647423</td>
+      <td>3.677083</td>
       <td>12.500000</td>
       <td>18.100000</td>
       <td>0.000000</td>
@@ -735,7 +735,7 @@ bins_rad = pd.cut(boston_df['RAD'], bins)
 
 ```python
 # using pd.cut returns unordered categories. Transform this to ordered categories.
-bins_rad = bins_rad.cat.as_unordered()
+bins_rad = bins_rad.cat.as_ordered()
 bins_rad.head()
 ```
 
@@ -748,7 +748,7 @@ bins_rad.head()
     3    (0, 3]
     4    (0, 3]
     Name: RAD, dtype: category
-    Categories (4, interval[int64]): [(0, 3], (3, 4], (4, 5], (5, 24]]
+    Categories (4, interval[int64]): [(0, 3] < (3, 4] < (4, 5] < (5, 24]]
 
 
 
@@ -761,7 +761,7 @@ bins_rad.value_counts().plot(kind='bar')
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x1a16e0f860>
+    <matplotlib.axes._subplots.AxesSubplot at 0x11541dfd0>
 
 
 
@@ -806,7 +806,7 @@ bins = [0, 250, 300, 360, 460, 712]
 # use pd.cut
 bins_tax = pd.cut(boston_df['TAX'], bins)
 # using pd.cut returns unordered categories. Transform this to ordered categories.
-bins_tax = bins_tax.cat.as_unordered()
+bins_tax = bins_tax.cat.as_ordered()
 bins_tax.head()
 ```
 
@@ -819,7 +819,7 @@ bins_tax.head()
     3      (0, 250]
     4      (0, 250]
     Name: TAX, dtype: category
-    Categories (5, interval[int64]): [(0, 250], (250, 300], (300, 360], (360, 460], (460, 712]]
+    Categories (5, interval[int64]): [(0, 250] < (250, 300] < (300, 360] < (360, 460] < (460, 712]]
 
 
 
@@ -832,7 +832,7 @@ bins_tax.value_counts().plot(kind='bar')
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x1a171c9320>
+    <matplotlib.axes._subplots.AxesSubplot at 0x11556fa58>
 
 
 
