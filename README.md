@@ -123,7 +123,7 @@ bins_rad = pd.cut(boston_df['RAD'], bins)
 
 ```python
 # using pd.cut returns unordered categories. Transform this to ordered categories.
-bins_rad = bins_rad.cat.as_unordered()
+bins_rad = bins_rad.cat.as_ordered()
 bins_rad.head()
 ```
 
