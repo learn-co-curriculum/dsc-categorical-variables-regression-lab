@@ -162,14 +162,14 @@ Split the "TAX" column up in 5 categories. You can chose the bins as desired but
 
 ## Create dummy variables
 
-Create dummy variables, and make sure their column names contain "TAX" and "RAD". Add the new dummy variables to boston_df and remove the old "RAD" and "TAX" columns.
+Create dummy variables, and make sure their column names contain "TAX" and "RAD" remembering to drop the first. Add the new dummy variables to boston_df and remove the old "RAD" and "TAX" columns.
 
 
 ```python
 # code goes here
 ```
 
-Note how you end up with 21 columns now!
+Note how you end up with 19 columns now!
 
 ## Summary
 
