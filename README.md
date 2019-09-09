@@ -251,7 +251,7 @@ For your reference, we copied the attribute information below. Additional inform
 - B: 1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town
 - LSTAT: % lower status of the population
 
-Recall that the data key only includes the features and does not include the target. For this data set, the target is the median value of owner-occupied homes in $1000s which is located in the target key. Let's convert the target key to a separate dataframe and set "MEDV" as the column name.
+Recall that the values corresponding to the data key are the features. The target is not included. For this data set, the target is the median value of owner-occupied homes in $1000s and the values can be accessed using the target key. Using the target key, convert the target to a separate dataframe and set "MEDV" as the column name.
 
 
 ```python
