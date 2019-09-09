@@ -101,7 +101,7 @@ boston.keys()
 
 
 
-Let's create a Pandas DataFrame with the data (which are the features, not including the target) and the feature names as column names.
+Let's create a Pandas DataFrame with the data (which are the features, **not including the target**) and the feature names as column names.
 
 
 ```python
@@ -251,7 +251,7 @@ For your reference, we copied the attribute information below. Additional inform
 - B: 1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town
 - LSTAT: % lower status of the population
 
-Let's convert the target to a dataframe as well, and assign the column name "MEDV"
+Recall that the data key only includes the features and does not include the target. For this data set, the target is the median value of owner-occupied homes in $1000s which is located in the target key. Let's convert the target key to a separate dataframe and set "MEDV" as the column name.
 
 
 ```python
