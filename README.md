@@ -2,17 +2,17 @@
 # Dealing with Categorical Variables - Lab
 
 ## Introduction
-In this lab, you'll explore the Boston Housing Data Set for categorical variables, and you'll transform your data so you'll be able to use categorical data as predictors!
+In this lab, you'll explore the Boston Housing dataset for categorical variables, and you'll transform your data so you'll be able to use categorical data as predictors!
 
 ## Objectives
 You will be able to:
-* Identify and inspect the categorical variables in the Boston housing data set
-* Learn how to categorize inputs that aren't categorical
-* Create new datasets with dummy variables 
+* Identify and inspect the categorical variables in the Boston housing dataset 
+* Categorize inputs that aren't categorical 
+* Create new datasets with dummy variables  
 
-## Importing the Boston Housing data set
+## Importing the Boston Housing dataset
 
-Let's start by importing the Boston Housing data set. This data set is available in Scikit-Learn, and can be imported running the column below.
+Let's start by importing the Boston Housing dataset. This dataset is available in Scikit-Learn, and can be imported by running the cell below: 
 
 
 ```python
@@ -21,16 +21,16 @@ from sklearn.datasets import load_boston
 boston = load_boston()
 ```
 
-If you'll inspect Boston now, you'll see that this basically returns a dictionary. Let's have a look at what exactly is stored in the dictionary by looking at the dictionary keys 
+If you'll inspect `boston` now, you'll see that this basically returns a dictionary. Let's have a look at what exactly is stored in the dictionary by looking at the dictionary keys: 
 
 
 ```python
-# inspect boston
+# Print boston
 ```
 
 
 ```python
-# look at the keys
+# Look at the keys
 ```
 
 Let's create a Pandas DataFrame with the data (which are the features, **not including the target**) and the feature names as column names.
@@ -40,9 +40,11 @@ Let's create a Pandas DataFrame with the data (which are the features, **not inc
 boston_features = None
 ```
 
+Now look at the first five rows of `boston_features`:  
+
 
 ```python
-#inspect the first few rows
+# Inspect the first few rows
 ```
 
 For your reference, we copied the attribute information below. Additional information can be found here: http://scikit-learn.org/stable/datasets/index.html#boston-dataset
@@ -60,20 +62,20 @@ For your reference, we copied the attribute information below. Additional inform
 - B: 1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town
 - LSTAT: % lower status of the population
 
-Recall that the values corresponding to the data key are the features. The target is not included. For this data set, the target is the median value of owner-occupied homes in $1000s and the values can be accessed using the target key. Using the target key, convert the target to a separate dataframe and set "MEDV" as the column name.
+Recall that the values corresponding to the data key are the features. The target is not included. For this dataset, the target is the median value of owner-occupied homes in $1000s and the values can be accessed using the target key. Using the target key, convert the target to a separate DataFrame and set `'MEDV'` as the column name.
 
 
 ```python
 boston_target = None
 
-#inspect the first few rows
+# Inspect the first few rows
 
 ```
 
 The target is described as: 
-- MEDV: Median value of owner-occupied homes in $1000’s
+- MEDV: Median value of owner-occupied homes in $1000s
 
-Next, let's merge the target and the predictors in one dataframe `boston_df`.
+Next, let's merge the target and the predictors in one DataFrame `boston_df`: 
 
 
 ```python
@@ -85,92 +87,101 @@ Let's inspect these 13 features using `.describe()` and `.info()`
 
 
 ```python
-# code here
-# code here
+# Use .describe()
+```
+
+
+```python
+# Use .info()
 ```
 
 Now, take a look at the scatter plots for each predictor with the target on the y-axis.
 
 
 ```python
-import pandas as pd
 import matplotlib.pyplot as plt
+%matplotlib inline
 
-# create scatter plots
+# Create scatter plots
+
 ```
 
 ## To categorical: binning
 
-If you created your scatterplots correctly, you'll notice that except for CHAS (the Charles River Dummy variable), there is no clearly categorical data. You will have seen though that RAD and TAX have more of a vertical-looking structure like the one seen in the lesson, and that there is less of a "cloud"-looking structure compared to most other variables. It is difficult to justify a linear pattern between predictor and target here. In this situation, it might make sense to restructure data into bins so that they're treated as categorical variables. We'll start by showing how this can be done for RAD and then it's your turn to do this for TAX.
+If you created your scatterplots correctly, you'll notice that except for `CHAS` (the Charles River Dummy variable), there is clearly no categorical data. You will have seen though that `RAD` and `TAX` have more of a vertical-looking structure like the one seen in the lesson, and that there is less of a "cloud"-looking structure compared to most other variables. It is difficult to justify a linear pattern between predictor and target here. In this situation, it might make sense to restructure data into bins so that they're treated as categorical variables. We'll start by showing how this can be done for `RAD` and then it's your turn to do this for `TAX`.
 
-### "RAD"
+### RAD
 
-Look at the structure of "RAD" to decide how to create your bins. 
+Look at the structure of `RAD` to decide how to create your bins. 
 
 
 ```python
-boston_df["RAD"].describe()
+# Your code here
+
 ```
 
 
 ```python
-# first, create bins for based on the values observed. 5 values will result in 4 bins
+# First, create bins based on the values observed. 5 values will result in 4 bins
 bins = [0, 3, 4 , 5, 24]
-# use pd.cut
-bins_rad = pd.cut(boston_df['RAD'], bins)
+
+# Use pd.cut()
+bins_rad = None
 ```
 
 
 ```python
-# using pd.cut returns unordered categories. Transform this to ordered categories.
-bins_rad = bins_rad.cat.as_ordered()
+# Using pd.cut() returns unordered categories. Transform this to ordered categories 
+bins_rad = None
 bins_rad.head()
 ```
 
 
 ```python
-# inspect the result
+# Inspect the result
 bins_rad.value_counts().plot(kind='bar')
 ```
 
 
 ```python
-# replace the existing "RAD" column
-boston_df["RAD"]=bins_rad
+# Replace the existing 'RAD' column
+boston_df['RAD'] = bins_rad
 ```
 
-### "TAX"
+### TAX
 
-Split the "TAX" column up in 5 categories. You can chose the bins as desired but make sure they're pretty well-balanced.
+Split the `TAX` column up in 5 categories. You can chose the bins as desired but make sure they're pretty well-balanced.
 
 
 ```python
-# repeat everything for "TAX"
+# Repeat everything for "TAX"
 ```
 
 ## Perform label encoding 
 
 
 ```python
-# perform label encoding and replace in boston_df
+# Perform label encoding and replace in boston_df
+
 ```
 
 
 ```python
-# inspect first few columns
+# Inspect first few columns
 ```
 
 ## Create dummy variables
 
-Create dummy variables, and make sure their column names contain "TAX" and "RAD" remembering to drop the first. Add the new dummy variables to boston_df and remove the old "RAD" and "TAX" columns.
+Create dummy variables, and make sure their column names contain `'TAX'` and `'RAD'` remembering to drop the first. Add the new dummy variables to `boston_df` and remove the old `'TAX'` and `'RAD'` columns.
 
 
 ```python
-# code goes here
+# Create dummpy variables for TAX and RAD columns
+
 ```
 
 Note how you end up with 19 columns now!
 
 ## Summary
 
-In this lab, you practiced your categorical variable knowledge on the Boston Housing Data Set!
+In this lab, you practiced your knowledge of categorical variables on the Boston Housing dataset!
