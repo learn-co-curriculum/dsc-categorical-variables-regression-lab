@@ -6,9 +6,10 @@ In this lab, you'll explore the Boston Housing dataset for categorical variables
 
 ## Objectives
 You will be able to:
-* Identify and inspect the categorical variables in the Boston housing dataset 
-* Categorize inputs that aren't categorical 
-* Create new datasets with dummy variables  
+* Determine whether variables are categorical or continuous
+* Use bins to turn continuous data into categorical data
+* Use one hot encoding to create dummy variables
+* Describe why dummy variables are necessary
 
 ## Importing the Boston Housing dataset
 
@@ -1296,4 +1297,4 @@ Note how you end up with 19 columns now!
 
 ## Summary
 
-In this lab, you practiced your knowledge of categorical variables on the Boston Housing dataset!
+In this lab, you practiced your knowledge of categorical variables on the Boston Housing dataset! Specifically, you practiced distinguishing continuous and categorical data. You also used binning to transform continuous into categorical data. You then created dummy variables using one hot encoding.
