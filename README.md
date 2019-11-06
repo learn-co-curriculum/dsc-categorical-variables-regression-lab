@@ -60,7 +60,7 @@ For your reference, we copied the attribute information below. Additional inform
 - RAD: index of accessibility to radial highways
 - TAX: full-value property-tax rate per $10,000
 - PTRATIO: pupil-teacher ratio by town
-- B: 1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town
+- B: 1000(Bk - 0.63)^2 where Bk is the proportion of African American individuals by town
 - LSTAT: % lower status of the population
 
 Recall that the values corresponding to the data key are the features. The target is not included. For this dataset, the target is the median value of owner-occupied homes in $1000s and the values can be accessed using the target key. Using the target key, convert the target to a separate DataFrame and set `'MEDV'` as the column name.
