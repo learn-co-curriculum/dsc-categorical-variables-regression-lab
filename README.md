@@ -1,108 +1,153 @@
-
 # Dealing with Categorical Variables - Lab
 
 ## Introduction
-In this lab, you'll explore the Ames Housing dataset for categorical variables, and you'll transform your data so you'll be able to use categorical data as predictors!
+
+In this lab, you'll explore the Ames Housing dataset and identify numeric and categorical variables. Then you'll transform some categorical data and use it in a multiple regression model.
 
 ## Objectives
+
 You will be able to:
-* Determine whether variables are categorical or continuous
-* Use one hot encoding to create dummy variables
-* Describe why dummy variables are necessary
 
-## Importing the Ames Housing dataset
+* Determine whether variables are categorical or numeric
+* Use one-hot encoding to create dummy variables
 
-Let's start by importing the Ames Housing dataset from ``ames.csv`` into a pandas dataframe using pandas ``read_csv()``
+## Step 1: Load the Ames Housing Dataset
+
+Import `pandas`, and use it to load the file `ames.csv` into a dataframe called `ames`. If you pass in the argument `index_col=0` this will set the "Id" feature as the index.
 
 
 ```python
-# Import your data
+# Your code here - load the dataset
+
 ```
 
-Now look at the first five rows of `ames`:  
+Visually inspect `ames` (it's ok if you can't see all of the columns).
 
 
 ```python
-# Inspect the first few rows
+# Your code here
+
 ```
 
-## Variable Descriptions
-Look in ``data_description.txt`` for a full description of all variables.
-
-A preview of some of the columns:
-
-**LotArea**: Size of the lot in square feet
-
-**MSZoning**: Identifies the general zoning classification of the sale.
-		
-       A	 Agriculture
-       C	 Commercial
-       FV	Floating Village Residential
-       I	 Industrial
-       RH	Residential High Density
-       RL	Residential Low Density
-       RP	Residential Low Density Park 
-       RM	Residential Medium Density
-
-**OverallCond**: Rates the overall condition of the house
-
-       10	Very Excellent
-       9	 Excellent
-       8	 Very Good
-       7	 Good
-       6	 Above Average	
-       5	 Average
-       4	 Below Average	
-       3	 Fair
-       2	 Poor
-       1	 Very Poor
-
-**KitchenQual**: Kitchen quality
-
-       Ex	Excellent
-       Gd	Good
-       TA	Typical/Average
-       Fa	Fair
-       Po	Poor
-
-**YrSold**: Year Sold (YYYY)
-
-**SalePrice**: Sale price of the house in dollars
-
-Let's inspect all features using `.describe()` and `.info()`
+Go ahead and drop all **columns** with missing data, to simplify the problem. Remember that you can use the `dropna` method ([documentation here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.dropna.html)).
 
 
 ```python
-# Use .describe()
+# Your code here - drop rows with missing data
+
+```
+
+## Step 2: Identify Numeric and Categorical Variables
+
+The file `data_description.txt`, located in this repository, has a full description of all variables.
+
+Using this file as well as `pandas` techniques, identify the following predictors:
+
+1. A **continuous numeric** predictor
+2. A **discrete numeric** predictor
+3. A **string categorical** predictor
+4. A **discrete categorical** predictor
+
+(Note that `SalePrice` is the target variable and should not be selected as a predictor.)
+
+For each of these predictors, visualize the relationship between the predictor and `SalePrice` using an appropriate plot.
+
+Finding these will take some digging -- don't be discouraged if they're not immediately obvious! The Ames Housing dataset is a lot more complex than the Auto MPG dataset. There is also no single right answer here.
+
+### Continuous Numeric Predictor
+
+
+```python
+# Your code here - continuous numeric predictor
+```
+
+### Discrete Numeric Predictor
+
+
+```python
+# Your code here - discrete numeric predictor
+
+```
+
+### String Categorical Predictor
+
+
+```python
+# Your code here - string categorical predictor
+
+```
+
+### Discrete Categorical Predictor
+
+
+```python
+# Your code here - discrete categorical predictor
+
+```
+
+## Step 3: Build a Multiple Regression Model with Your Chosen Predictors
+
+Choose the best-looking 3 out of 4 predictors to include in your model.
+
+Make sure that you one-hot encode your categorical predictor(s) (regardless of whether the current data type is a string or number) first!
+
+
+```python
+# Your code here - prepare X and y, including one-hot encoding
+
 ```
 
 
 ```python
-# Use .info()
+# Your answer here - which category or categories were dropped?
+
 ```
-
-### Plot Categorical Variables
-
-Now, pick 6 categorical variables and plot them against SalePrice with a bar graph for each variable. All 6 bar graphs should be on the same figure.
 
 
 ```python
-import matplotlib.pyplot as plt
-%matplotlib inline
+# Your code here - build a regression model and display results
 
-# Create bar plots
 ```
 
-## Create dummy variables
+## Step 4: Create Partial Regression Plots for Features
 
-Create dummy variables for the six categorical features you chose remembering to drop the first. Drop the categorical columns that you used, concat the dummy columns to our continuous variables and asign it to a new variable `ames_preprocessed`
+For each feature of the regression above (including the dummy features), plot the partial regression.
 
 
 ```python
-# Create dummy variables for your six categorical features
+# Your code here - create partial regression plots
 
+```
+
+## Step 5: Calculate an Error-Based Metric
+
+In addition to the adjusted R-Squared that we can see in the model summary, calculate either MAE or RMSE for this model.
+
+
+```python
+# Your code here - calculate an error-based metric
+
+```
+
+## Step 6: Summarize Findings
+
+Between the model results, partial regression plots, and error-based metric, what does this model tell you? What would your next steps be to improve the model?
+
+
+```python
+# Your answer here
+
+```
+
+## Level Up (Optional)
+
+Try transforming X using scikit-learn _and_ fitting a scikit-learn linear regression as well. If there are any differences in the result, investigate them.
+
+
+```python
+# Your code here
 ```
 
 ## Summary
 
-In this lab, you practiced your knowledge of categorical variables on the Ames Housing dataset! Specifically, you practiced distinguishing continuous and categorical data. You then created dummy variables using one hot encoding.
+In this lab, you practiced your knowledge of categorical variables on the Ames Housing dataset! Specifically, you practiced distinguishing numeric and categorical data. You then created dummy variables using one hot encoding in order to build a multiple regression model.
