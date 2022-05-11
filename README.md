@@ -1,46 +1,47 @@
-
 # Dealing with Categorical Variables - Lab
 
 ## Introduction
-In this lab, you'll explore the Ames Housing dataset for categorical variables, and you'll transform your data so you'll be able to use categorical data as predictors!
+
+In this lab, you'll explore the Ames Housing dataset and identify numeric and categorical variables. Then you'll transform some categorical data and use it in a multiple regression model.
 
 ## Objectives
+
 You will be able to:
-* Determine whether variables are categorical or continuous
-* Use one hot encoding to create dummy variables
-* Describe why dummy variables are necessary
 
-## Importing the Ames Housing dataset
+* Determine whether variables are categorical or numeric
+* Use one-hot encoding to create dummy variables
 
-Let's start by importing the Ames Housing dataset from ``ames.csv`` into a pandas dataframe using pandas ``read_csv()``
+## Step 1: Load the Ames Housing Dataset
+
+Import `pandas`, and use it to load the file `ames.csv` into a dataframe called `ames`. If you pass in the argument `index_col=0` this will set the "Id" feature as the index.
 
 
 ```python
-# Import your data
+# Your code here - load the dataset
+
 ```
 
 
 ```python
 # __SOLUTION__ 
-# Import your data
+# Load the dataset
 
 import pandas as pd
-ames = pd.read_csv('ames.csv')
+ames = pd.read_csv('ames.csv', index_col=0)
 ```
 
-Now look at the first five rows of `ames`:  
+Visually inspect `ames` (it's ok if you can't see all of the columns).
 
 
 ```python
-# Inspect the first few rows
+# Your code here
+
 ```
 
 
 ```python
-# __SOLUTION__ 
-# Inspect the first few rows
-
-ames.head()
+# __SOLUTION__
+ames
 ```
 
 
@@ -64,7 +65,6 @@ ames.head()
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Id</th>
       <th>MSSubClass</th>
       <th>MSZoning</th>
       <th>LotFrontage</th>
@@ -74,6 +74,7 @@ ames.head()
       <th>LotShape</th>
       <th>LandContour</th>
       <th>Utilities</th>
+      <th>LotConfig</th>
       <th>...</th>
       <th>PoolArea</th>
       <th>PoolQC</th>
@@ -86,11 +87,34 @@ ames.head()
       <th>SaleCondition</th>
       <th>SalePrice</th>
     </tr>
+    <tr>
+      <th>Id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
-      <td>1</td>
+      <th>1</th>
       <td>60</td>
       <td>RL</td>
       <td>65.0</td>
@@ -100,6 +124,7 @@ ames.head()
       <td>Reg</td>
       <td>Lvl</td>
       <td>AllPub</td>
+      <td>Inside</td>
       <td>...</td>
       <td>0</td>
       <td>NaN</td>
@@ -113,8 +138,7 @@ ames.head()
       <td>208500</td>
     </tr>
     <tr>
-      <th>1</th>
-      <td>2</td>
+      <th>2</th>
       <td>20</td>
       <td>RL</td>
       <td>80.0</td>
@@ -124,6 +148,7 @@ ames.head()
       <td>Reg</td>
       <td>Lvl</td>
       <td>AllPub</td>
+      <td>FR2</td>
       <td>...</td>
       <td>0</td>
       <td>NaN</td>
@@ -137,8 +162,7 @@ ames.head()
       <td>181500</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>3</td>
+      <th>3</th>
       <td>60</td>
       <td>RL</td>
       <td>68.0</td>
@@ -148,6 +172,7 @@ ames.head()
       <td>IR1</td>
       <td>Lvl</td>
       <td>AllPub</td>
+      <td>Inside</td>
       <td>...</td>
       <td>0</td>
       <td>NaN</td>
@@ -161,8 +186,7 @@ ames.head()
       <td>223500</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>4</td>
+      <th>4</th>
       <td>70</td>
       <td>RL</td>
       <td>60.0</td>
@@ -172,6 +196,7 @@ ames.head()
       <td>IR1</td>
       <td>Lvl</td>
       <td>AllPub</td>
+      <td>Corner</td>
       <td>...</td>
       <td>0</td>
       <td>NaN</td>
@@ -185,8 +210,7 @@ ames.head()
       <td>140000</td>
     </tr>
     <tr>
-      <th>4</th>
-      <td>5</td>
+      <th>5</th>
       <td>60</td>
       <td>RL</td>
       <td>84.0</td>
@@ -196,6 +220,7 @@ ames.head()
       <td>IR1</td>
       <td>Lvl</td>
       <td>AllPub</td>
+      <td>FR2</td>
       <td>...</td>
       <td>0</td>
       <td>NaN</td>
@@ -208,69 +233,170 @@ ames.head()
       <td>Normal</td>
       <td>250000</td>
     </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1456</th>
+      <td>60</td>
+      <td>RL</td>
+      <td>62.0</td>
+      <td>7917</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>8</td>
+      <td>2007</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>175000</td>
+    </tr>
+    <tr>
+      <th>1457</th>
+      <td>20</td>
+      <td>RL</td>
+      <td>85.0</td>
+      <td>13175</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>MnPrv</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>210000</td>
+    </tr>
+    <tr>
+      <th>1458</th>
+      <td>70</td>
+      <td>RL</td>
+      <td>66.0</td>
+      <td>9042</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>GdPrv</td>
+      <td>Shed</td>
+      <td>2500</td>
+      <td>5</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>266500</td>
+    </tr>
+    <tr>
+      <th>1459</th>
+      <td>20</td>
+      <td>RL</td>
+      <td>68.0</td>
+      <td>9717</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>4</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>142125</td>
+    </tr>
+    <tr>
+      <th>1460</th>
+      <td>20</td>
+      <td>RL</td>
+      <td>75.0</td>
+      <td>9937</td>
+      <td>Pave</td>
+      <td>NaN</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>...</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>6</td>
+      <td>2008</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>147500</td>
+    </tr>
   </tbody>
 </table>
-<p>5 rows × 81 columns</p>
+<p>1460 rows × 80 columns</p>
 </div>
 
 
 
-## Variable Descriptions
-Look in ``data_description.txt`` for a full description of all variables.
-
-A preview of some of the columns:
-
-**LotArea**: Size of the lot in square feet
-
-**MSZoning**: Identifies the general zoning classification of the sale.
-		
-       A	 Agriculture
-       C	 Commercial
-       FV	Floating Village Residential
-       I	 Industrial
-       RH	Residential High Density
-       RL	Residential Low Density
-       RP	Residential Low Density Park 
-       RM	Residential Medium Density
-
-**OverallCond**: Rates the overall condition of the house
-
-       10	Very Excellent
-       9	 Excellent
-       8	 Very Good
-       7	 Good
-       6	 Above Average	
-       5	 Average
-       4	 Below Average	
-       3	 Fair
-       2	 Poor
-       1	 Very Poor
-
-**KitchenQual**: Kitchen quality
-
-       Ex	Excellent
-       Gd	Good
-       TA	Typical/Average
-       Fa	Fair
-       Po	Poor
-
-**YrSold**: Year Sold (YYYY)
-
-**SalePrice**: Sale price of the house in dollars
-
-Let's inspect all features using `.describe()` and `.info()`
+Go ahead and drop all **columns** with missing data, to simplify the problem. Remember that you can use the `dropna` method ([documentation here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.dropna.html)).
 
 
 ```python
-# Use .describe()
+# Your code here - drop rows with missing data
+
 ```
 
 
 ```python
-# __SOLUTION__ 
-# Use .describe()
-
-ames.describe()
+# __SOLUTION__
+ames.dropna(axis=1, inplace=True)
+ames
 ```
 
 
@@ -294,16 +420,387 @@ ames.describe()
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Id</th>
       <th>MSSubClass</th>
-      <th>LotFrontage</th>
+      <th>MSZoning</th>
+      <th>LotArea</th>
+      <th>Street</th>
+      <th>LotShape</th>
+      <th>LandContour</th>
+      <th>Utilities</th>
+      <th>LotConfig</th>
+      <th>LandSlope</th>
+      <th>Neighborhood</th>
+      <th>...</th>
+      <th>EnclosedPorch</th>
+      <th>3SsnPorch</th>
+      <th>ScreenPorch</th>
+      <th>PoolArea</th>
+      <th>MiscVal</th>
+      <th>MoSold</th>
+      <th>YrSold</th>
+      <th>SaleType</th>
+      <th>SaleCondition</th>
+      <th>SalePrice</th>
+    </tr>
+    <tr>
+      <th>Id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>60</td>
+      <td>RL</td>
+      <td>8450</td>
+      <td>Pave</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>CollgCr</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2008</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>208500</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>20</td>
+      <td>RL</td>
+      <td>9600</td>
+      <td>Pave</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>FR2</td>
+      <td>Gtl</td>
+      <td>Veenker</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>5</td>
+      <td>2007</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>181500</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>60</td>
+      <td>RL</td>
+      <td>11250</td>
+      <td>Pave</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>CollgCr</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>9</td>
+      <td>2008</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>223500</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>70</td>
+      <td>RL</td>
+      <td>9550</td>
+      <td>Pave</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Corner</td>
+      <td>Gtl</td>
+      <td>Crawfor</td>
+      <td>...</td>
+      <td>272</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2006</td>
+      <td>WD</td>
+      <td>Abnorml</td>
+      <td>140000</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>60</td>
+      <td>RL</td>
+      <td>14260</td>
+      <td>Pave</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>FR2</td>
+      <td>Gtl</td>
+      <td>NoRidge</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>12</td>
+      <td>2008</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>250000</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1456</th>
+      <td>60</td>
+      <td>RL</td>
+      <td>7917</td>
+      <td>Pave</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>Gilbert</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>8</td>
+      <td>2007</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>175000</td>
+    </tr>
+    <tr>
+      <th>1457</th>
+      <td>20</td>
+      <td>RL</td>
+      <td>13175</td>
+      <td>Pave</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>NWAmes</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>210000</td>
+    </tr>
+    <tr>
+      <th>1458</th>
+      <td>70</td>
+      <td>RL</td>
+      <td>9042</td>
+      <td>Pave</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>Crawfor</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2500</td>
+      <td>5</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>266500</td>
+    </tr>
+    <tr>
+      <th>1459</th>
+      <td>20</td>
+      <td>RL</td>
+      <td>9717</td>
+      <td>Pave</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>NAmes</td>
+      <td>...</td>
+      <td>112</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>4</td>
+      <td>2010</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>142125</td>
+    </tr>
+    <tr>
+      <th>1460</th>
+      <td>20</td>
+      <td>RL</td>
+      <td>9937</td>
+      <td>Pave</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>Edwards</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>6</td>
+      <td>2008</td>
+      <td>WD</td>
+      <td>Normal</td>
+      <td>147500</td>
+    </tr>
+  </tbody>
+</table>
+<p>1460 rows × 61 columns</p>
+</div>
+
+
+
+## Step 2: Identify Numeric and Categorical Variables
+
+The file `data_description.txt`, located in this repository, has a full description of all variables.
+
+Using this file as well as `pandas` techniques, identify the following predictors:
+
+1. A **continuous numeric** predictor
+2. A **discrete numeric** predictor
+3. A **string categorical** predictor
+4. A **discrete categorical** predictor
+
+(Note that `SalePrice` is the target variable and should not be selected as a predictor.)
+
+For each of these predictors, visualize the relationship between the predictor and `SalePrice` using an appropriate plot.
+
+Finding these will take some digging -- don't be discouraged if they're not immediately obvious! The Ames Housing dataset is a lot more complex than the Auto MPG dataset. There is also no single right answer here.
+
+### Continuous Numeric Predictor
+
+
+```python
+# Your code here - continuous numeric predictor
+```
+
+
+```python
+# __SOLUTION__
+# A continuous numeric feature should be encoded as some sort of number
+ames.select_dtypes("number")
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>MSSubClass</th>
       <th>LotArea</th>
       <th>OverallQual</th>
       <th>OverallCond</th>
       <th>YearBuilt</th>
       <th>YearRemodAdd</th>
-      <th>MasVnrArea</th>
       <th>BsmtFinSF1</th>
+      <th>BsmtFinSF2</th>
+      <th>BsmtUnfSF</th>
+      <th>TotalBsmtSF</th>
       <th>...</th>
       <th>WoodDeckSF</th>
       <th>OpenPorchSF</th>
@@ -316,370 +813,393 @@ ames.describe()
       <th>YrSold</th>
       <th>SalePrice</th>
     </tr>
+    <tr>
+      <th>Id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
   </thead>
   <tbody>
     <tr>
-      <th>count</th>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1201.000000</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1452.000000</td>
-      <td>1460.000000</td>
+      <th>1</th>
+      <td>60</td>
+      <td>8450</td>
+      <td>7</td>
+      <td>5</td>
+      <td>2003</td>
+      <td>2003</td>
+      <td>706</td>
+      <td>0</td>
+      <td>150</td>
+      <td>856</td>
       <td>...</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
-      <td>1460.000000</td>
+      <td>0</td>
+      <td>61</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2008</td>
+      <td>208500</td>
     </tr>
     <tr>
-      <th>mean</th>
-      <td>730.500000</td>
-      <td>56.897260</td>
-      <td>70.049958</td>
-      <td>10516.828082</td>
-      <td>6.099315</td>
-      <td>5.575342</td>
-      <td>1971.267808</td>
-      <td>1984.865753</td>
-      <td>103.685262</td>
-      <td>443.639726</td>
+      <th>2</th>
+      <td>20</td>
+      <td>9600</td>
+      <td>6</td>
+      <td>8</td>
+      <td>1976</td>
+      <td>1976</td>
+      <td>978</td>
+      <td>0</td>
+      <td>284</td>
+      <td>1262</td>
       <td>...</td>
-      <td>94.244521</td>
-      <td>46.660274</td>
-      <td>21.954110</td>
-      <td>3.409589</td>
-      <td>15.060959</td>
-      <td>2.758904</td>
-      <td>43.489041</td>
-      <td>6.321918</td>
-      <td>2007.815753</td>
-      <td>180921.195890</td>
+      <td>298</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>5</td>
+      <td>2007</td>
+      <td>181500</td>
     </tr>
     <tr>
-      <th>std</th>
-      <td>421.610009</td>
-      <td>42.300571</td>
-      <td>24.284752</td>
-      <td>9981.264932</td>
-      <td>1.382997</td>
-      <td>1.112799</td>
-      <td>30.202904</td>
-      <td>20.645407</td>
-      <td>181.066207</td>
-      <td>456.098091</td>
+      <th>3</th>
+      <td>60</td>
+      <td>11250</td>
+      <td>7</td>
+      <td>5</td>
+      <td>2001</td>
+      <td>2002</td>
+      <td>486</td>
+      <td>0</td>
+      <td>434</td>
+      <td>920</td>
       <td>...</td>
-      <td>125.338794</td>
-      <td>66.256028</td>
-      <td>61.119149</td>
-      <td>29.317331</td>
-      <td>55.757415</td>
-      <td>40.177307</td>
-      <td>496.123024</td>
-      <td>2.703626</td>
-      <td>1.328095</td>
-      <td>79442.502883</td>
+      <td>0</td>
+      <td>42</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>9</td>
+      <td>2008</td>
+      <td>223500</td>
     </tr>
     <tr>
-      <th>min</th>
-      <td>1.000000</td>
-      <td>20.000000</td>
-      <td>21.000000</td>
-      <td>1300.000000</td>
-      <td>1.000000</td>
-      <td>1.000000</td>
-      <td>1872.000000</td>
-      <td>1950.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
+      <th>4</th>
+      <td>70</td>
+      <td>9550</td>
+      <td>7</td>
+      <td>5</td>
+      <td>1915</td>
+      <td>1970</td>
+      <td>216</td>
+      <td>0</td>
+      <td>540</td>
+      <td>756</td>
       <td>...</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>1.000000</td>
-      <td>2006.000000</td>
-      <td>34900.000000</td>
+      <td>0</td>
+      <td>35</td>
+      <td>272</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2006</td>
+      <td>140000</td>
     </tr>
     <tr>
-      <th>25%</th>
-      <td>365.750000</td>
-      <td>20.000000</td>
-      <td>59.000000</td>
-      <td>7553.500000</td>
-      <td>5.000000</td>
-      <td>5.000000</td>
-      <td>1954.000000</td>
-      <td>1967.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
+      <th>5</th>
+      <td>60</td>
+      <td>14260</td>
+      <td>8</td>
+      <td>5</td>
+      <td>2000</td>
+      <td>2000</td>
+      <td>655</td>
+      <td>0</td>
+      <td>490</td>
+      <td>1145</td>
       <td>...</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>5.000000</td>
-      <td>2007.000000</td>
-      <td>129975.000000</td>
+      <td>192</td>
+      <td>84</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>12</td>
+      <td>2008</td>
+      <td>250000</td>
     </tr>
     <tr>
-      <th>50%</th>
-      <td>730.500000</td>
-      <td>50.000000</td>
-      <td>69.000000</td>
-      <td>9478.500000</td>
-      <td>6.000000</td>
-      <td>5.000000</td>
-      <td>1973.000000</td>
-      <td>1994.000000</td>
-      <td>0.000000</td>
-      <td>383.500000</td>
+      <th>...</th>
       <td>...</td>
-      <td>0.000000</td>
-      <td>25.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>6.000000</td>
-      <td>2008.000000</td>
-      <td>163000.000000</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
     </tr>
     <tr>
-      <th>75%</th>
-      <td>1095.250000</td>
-      <td>70.000000</td>
-      <td>80.000000</td>
-      <td>11601.500000</td>
-      <td>7.000000</td>
-      <td>6.000000</td>
-      <td>2000.000000</td>
-      <td>2004.000000</td>
-      <td>166.000000</td>
-      <td>712.250000</td>
+      <th>1456</th>
+      <td>60</td>
+      <td>7917</td>
+      <td>6</td>
+      <td>5</td>
+      <td>1999</td>
+      <td>2000</td>
+      <td>0</td>
+      <td>0</td>
+      <td>953</td>
+      <td>953</td>
       <td>...</td>
-      <td>168.000000</td>
-      <td>68.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>8.000000</td>
-      <td>2009.000000</td>
-      <td>214000.000000</td>
+      <td>0</td>
+      <td>40</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>8</td>
+      <td>2007</td>
+      <td>175000</td>
     </tr>
     <tr>
-      <th>max</th>
-      <td>1460.000000</td>
-      <td>190.000000</td>
-      <td>313.000000</td>
-      <td>215245.000000</td>
-      <td>10.000000</td>
-      <td>9.000000</td>
-      <td>2010.000000</td>
-      <td>2010.000000</td>
-      <td>1600.000000</td>
-      <td>5644.000000</td>
+      <th>1457</th>
+      <td>20</td>
+      <td>13175</td>
+      <td>6</td>
+      <td>6</td>
+      <td>1978</td>
+      <td>1988</td>
+      <td>790</td>
+      <td>163</td>
+      <td>589</td>
+      <td>1542</td>
       <td>...</td>
-      <td>857.000000</td>
-      <td>547.000000</td>
-      <td>552.000000</td>
-      <td>508.000000</td>
-      <td>480.000000</td>
-      <td>738.000000</td>
-      <td>15500.000000</td>
-      <td>12.000000</td>
-      <td>2010.000000</td>
-      <td>755000.000000</td>
+      <td>349</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2010</td>
+      <td>210000</td>
+    </tr>
+    <tr>
+      <th>1458</th>
+      <td>70</td>
+      <td>9042</td>
+      <td>7</td>
+      <td>9</td>
+      <td>1941</td>
+      <td>2006</td>
+      <td>275</td>
+      <td>0</td>
+      <td>877</td>
+      <td>1152</td>
+      <td>...</td>
+      <td>0</td>
+      <td>60</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2500</td>
+      <td>5</td>
+      <td>2010</td>
+      <td>266500</td>
+    </tr>
+    <tr>
+      <th>1459</th>
+      <td>20</td>
+      <td>9717</td>
+      <td>5</td>
+      <td>6</td>
+      <td>1950</td>
+      <td>1996</td>
+      <td>49</td>
+      <td>1029</td>
+      <td>0</td>
+      <td>1078</td>
+      <td>...</td>
+      <td>366</td>
+      <td>0</td>
+      <td>112</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>4</td>
+      <td>2010</td>
+      <td>142125</td>
+    </tr>
+    <tr>
+      <th>1460</th>
+      <td>20</td>
+      <td>9937</td>
+      <td>5</td>
+      <td>6</td>
+      <td>1965</td>
+      <td>1965</td>
+      <td>830</td>
+      <td>290</td>
+      <td>136</td>
+      <td>1256</td>
+      <td>...</td>
+      <td>736</td>
+      <td>68</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>6</td>
+      <td>2008</td>
+      <td>147500</td>
     </tr>
   </tbody>
 </table>
-<p>8 rows × 38 columns</p>
+<p>1460 rows × 34 columns</p>
 </div>
 
 
 
 
 ```python
-# Use .info()
+# __SOLUTION__
+# Just reading from left to right,
+
+# MSSubClass doesn't seem like a good choice, because it seems like it's a
+# "code" (i.e. categorical) rather than truly numeric
+
+# LotArea does seem like a reasonable choice. The description says:
+# LotArea: Lot size in square feet
+
+# That sounds like a number
+
+ames.plot.scatter(x="LotArea", y="SalePrice");
 ```
 
 
-```python
-# __SOLUTION__ 
-# Use .info()
-
-ames.info()
-```
-
-    <class 'pandas.core.frame.DataFrame'>
-    RangeIndex: 1460 entries, 0 to 1459
-    Data columns (total 81 columns):
-    Id               1460 non-null int64
-    MSSubClass       1460 non-null int64
-    MSZoning         1460 non-null object
-    LotFrontage      1201 non-null float64
-    LotArea          1460 non-null int64
-    Street           1460 non-null object
-    Alley            91 non-null object
-    LotShape         1460 non-null object
-    LandContour      1460 non-null object
-    Utilities        1460 non-null object
-    LotConfig        1460 non-null object
-    LandSlope        1460 non-null object
-    Neighborhood     1460 non-null object
-    Condition1       1460 non-null object
-    Condition2       1460 non-null object
-    BldgType         1460 non-null object
-    HouseStyle       1460 non-null object
-    OverallQual      1460 non-null int64
-    OverallCond      1460 non-null int64
-    YearBuilt        1460 non-null int64
-    YearRemodAdd     1460 non-null int64
-    RoofStyle        1460 non-null object
-    RoofMatl         1460 non-null object
-    Exterior1st      1460 non-null object
-    Exterior2nd      1460 non-null object
-    MasVnrType       1452 non-null object
-    MasVnrArea       1452 non-null float64
-    ExterQual        1460 non-null object
-    ExterCond        1460 non-null object
-    Foundation       1460 non-null object
-    BsmtQual         1423 non-null object
-    BsmtCond         1423 non-null object
-    BsmtExposure     1422 non-null object
-    BsmtFinType1     1423 non-null object
-    BsmtFinSF1       1460 non-null int64
-    BsmtFinType2     1422 non-null object
-    BsmtFinSF2       1460 non-null int64
-    BsmtUnfSF        1460 non-null int64
-    TotalBsmtSF      1460 non-null int64
-    Heating          1460 non-null object
-    HeatingQC        1460 non-null object
-    CentralAir       1460 non-null object
-    Electrical       1459 non-null object
-    1stFlrSF         1460 non-null int64
-    2ndFlrSF         1460 non-null int64
-    LowQualFinSF     1460 non-null int64
-    GrLivArea        1460 non-null int64
-    BsmtFullBath     1460 non-null int64
-    BsmtHalfBath     1460 non-null int64
-    FullBath         1460 non-null int64
-    HalfBath         1460 non-null int64
-    BedroomAbvGr     1460 non-null int64
-    KitchenAbvGr     1460 non-null int64
-    KitchenQual      1460 non-null object
-    TotRmsAbvGrd     1460 non-null int64
-    Functional       1460 non-null object
-    Fireplaces       1460 non-null int64
-    FireplaceQu      770 non-null object
-    GarageType       1379 non-null object
-    GarageYrBlt      1379 non-null float64
-    GarageFinish     1379 non-null object
-    GarageCars       1460 non-null int64
-    GarageArea       1460 non-null int64
-    GarageQual       1379 non-null object
-    GarageCond       1379 non-null object
-    PavedDrive       1460 non-null object
-    WoodDeckSF       1460 non-null int64
-    OpenPorchSF      1460 non-null int64
-    EnclosedPorch    1460 non-null int64
-    3SsnPorch        1460 non-null int64
-    ScreenPorch      1460 non-null int64
-    PoolArea         1460 non-null int64
-    PoolQC           7 non-null object
-    Fence            281 non-null object
-    MiscFeature      54 non-null object
-    MiscVal          1460 non-null int64
-    MoSold           1460 non-null int64
-    YrSold           1460 non-null int64
-    SaleType         1460 non-null object
-    SaleCondition    1460 non-null object
-    SalePrice        1460 non-null int64
-    dtypes: float64(3), int64(35), object(43)
-    memory usage: 924.0+ KB
-
-
-### Plot Categorical Variables
-
-Now, pick 6 categorical variables and plot them against SalePrice with a bar graph for each variable. All 6 bar graphs should be on the same figure.
-
-
-```python
-import matplotlib.pyplot as plt
-%matplotlib inline
-
-# Create bar plots
-```
-
-
-```python
-# __SOLUTION__ 
-
-import matplotlib.pyplot as plt
-%matplotlib inline
-
-fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(16,10), sharey=True)
-
-categoricals = ['BldgType', 'KitchenQual', 'SaleType', 'MSZoning', 'Street', 'Neighborhood']
-
-for col, ax in zip(categoricals, axes.flatten()):
-    (ames.groupby(col)               # group values together by column of interest
-         .mean()['SalePrice']        # take the mean of the saleprice for each group
-         .sort_values()              # sort the groups in ascending order
-         .plot
-         .bar(ax=ax))                # create a bar graph on the ax
     
-    ax.set_title(col)                # Make the title the name of the column
+![png](index_files/index_16_0.png)
     
-fig.tight_layout()
-```
 
-
-![png](index_files/index_18_0.png)
-
-
-## Create dummy variables
-
-Create dummy variables for the six categorical features you chose remembering to drop the first. Drop the categorical columns that you used, concat the dummy columns to our continuous variables and asign it to a new variable `ames_preprocessed`
 
 
 ```python
-# Create dummy variables for your six categorical features
+# __SOLUTION__
+# Hmm, that doesn't look quite like a linear relationship. Let's try GrLivArea instead
+
+ames.plot.scatter(x="GrLivArea", y="SalePrice");
+```
+
+
+    
+![png](index_files/index_17_0.png)
+    
+
+
+
+```python
+# __SOLUTION__
+# That looks better. Let's go with that.
+```
+
+### Discrete Numeric Predictor
+
+
+```python
+# Your code here - discrete numeric predictor
 
 ```
 
 
 ```python
-# __SOLUTION__ 
+# __SOLUTION__
+# Continuing left to right, OverallQual and OverallCond are definitely discrete
+import matplotlib.pyplot as plt
+fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12,5))
 
-# Create dummy variables for your six categorical features
+ames.plot.scatter(x="OverallQual", y="SalePrice", ax=ax1)
+ames.plot.scatter(x="OverallCond", y="SalePrice", ax=ax2);
+```
 
-dummies = pd.get_dummies(ames[categoricals], prefix=categoricals, drop_first=True)
 
-ames_preprocessed = ames.drop(categoricals, axis=1)
+    
+![png](index_files/index_21_0.png)
+    
 
-ames_preprocessed = pd.concat([ames_preprocessed, dummies], axis=1)
 
-ames_preprocessed.head()
+
+```python
+# __SOLUTION__
+# But are they numeric, and linearly related to SalePrice?
+
+# OverallQual looks reasonable. It does seem like a quality of
+# 8 is "twice as much" as a quality of 4. Let's call that our
+# discrete numeric predictor.
+```
+
+### String Categorical Predictor
+
+
+```python
+# Your code here - string categorical predictor
+
+```
+
+
+```python
+# __SOLUTION__
+# Now let's select all string columns
+ames.select_dtypes("object")
 ```
 
 
@@ -703,157 +1223,1242 @@ ames_preprocessed.head()
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Id</th>
-      <th>MSSubClass</th>
-      <th>LotFrontage</th>
-      <th>LotArea</th>
-      <th>Alley</th>
+      <th>MSZoning</th>
+      <th>Street</th>
       <th>LotShape</th>
       <th>LandContour</th>
       <th>Utilities</th>
       <th>LotConfig</th>
       <th>LandSlope</th>
+      <th>Neighborhood</th>
+      <th>Condition1</th>
+      <th>Condition2</th>
       <th>...</th>
-      <th>Neighborhood_NoRidge</th>
-      <th>Neighborhood_NridgHt</th>
-      <th>Neighborhood_OldTown</th>
-      <th>Neighborhood_SWISU</th>
-      <th>Neighborhood_Sawyer</th>
-      <th>Neighborhood_SawyerW</th>
-      <th>Neighborhood_Somerst</th>
-      <th>Neighborhood_StoneBr</th>
-      <th>Neighborhood_Timber</th>
-      <th>Neighborhood_Veenker</th>
+      <th>ExterCond</th>
+      <th>Foundation</th>
+      <th>Heating</th>
+      <th>HeatingQC</th>
+      <th>CentralAir</th>
+      <th>KitchenQual</th>
+      <th>Functional</th>
+      <th>PavedDrive</th>
+      <th>SaleType</th>
+      <th>SaleCondition</th>
+    </tr>
+    <tr>
+      <th>Id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>60</td>
-      <td>65.0</td>
-      <td>8450</td>
-      <td>NaN</td>
+      <th>1</th>
+      <td>RL</td>
+      <td>Pave</td>
       <td>Reg</td>
       <td>Lvl</td>
       <td>AllPub</td>
       <td>Inside</td>
       <td>Gtl</td>
+      <td>CollgCr</td>
+      <td>Norm</td>
+      <td>Norm</td>
       <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>TA</td>
+      <td>PConc</td>
+      <td>GasA</td>
+      <td>Ex</td>
+      <td>Y</td>
+      <td>Gd</td>
+      <td>Typ</td>
+      <td>Y</td>
+      <td>WD</td>
+      <td>Normal</td>
     </tr>
     <tr>
-      <th>1</th>
-      <td>2</td>
-      <td>20</td>
-      <td>80.0</td>
-      <td>9600</td>
-      <td>NaN</td>
+      <th>2</th>
+      <td>RL</td>
+      <td>Pave</td>
       <td>Reg</td>
       <td>Lvl</td>
       <td>AllPub</td>
       <td>FR2</td>
       <td>Gtl</td>
+      <td>Veenker</td>
+      <td>Feedr</td>
+      <td>Norm</td>
       <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>TA</td>
+      <td>CBlock</td>
+      <td>GasA</td>
+      <td>Ex</td>
+      <td>Y</td>
+      <td>TA</td>
+      <td>Typ</td>
+      <td>Y</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>RL</td>
+      <td>Pave</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>CollgCr</td>
+      <td>Norm</td>
+      <td>Norm</td>
+      <td>...</td>
+      <td>TA</td>
+      <td>PConc</td>
+      <td>GasA</td>
+      <td>Ex</td>
+      <td>Y</td>
+      <td>Gd</td>
+      <td>Typ</td>
+      <td>Y</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>RL</td>
+      <td>Pave</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Corner</td>
+      <td>Gtl</td>
+      <td>Crawfor</td>
+      <td>Norm</td>
+      <td>Norm</td>
+      <td>...</td>
+      <td>TA</td>
+      <td>BrkTil</td>
+      <td>GasA</td>
+      <td>Gd</td>
+      <td>Y</td>
+      <td>Gd</td>
+      <td>Typ</td>
+      <td>Y</td>
+      <td>WD</td>
+      <td>Abnorml</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>RL</td>
+      <td>Pave</td>
+      <td>IR1</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>FR2</td>
+      <td>Gtl</td>
+      <td>NoRidge</td>
+      <td>Norm</td>
+      <td>Norm</td>
+      <td>...</td>
+      <td>TA</td>
+      <td>PConc</td>
+      <td>GasA</td>
+      <td>Ex</td>
+      <td>Y</td>
+      <td>Gd</td>
+      <td>Typ</td>
+      <td>Y</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1456</th>
+      <td>RL</td>
+      <td>Pave</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>Gilbert</td>
+      <td>Norm</td>
+      <td>Norm</td>
+      <td>...</td>
+      <td>TA</td>
+      <td>PConc</td>
+      <td>GasA</td>
+      <td>Ex</td>
+      <td>Y</td>
+      <td>TA</td>
+      <td>Typ</td>
+      <td>Y</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+    <tr>
+      <th>1457</th>
+      <td>RL</td>
+      <td>Pave</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>NWAmes</td>
+      <td>Norm</td>
+      <td>Norm</td>
+      <td>...</td>
+      <td>TA</td>
+      <td>CBlock</td>
+      <td>GasA</td>
+      <td>TA</td>
+      <td>Y</td>
+      <td>TA</td>
+      <td>Min1</td>
+      <td>Y</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+    <tr>
+      <th>1458</th>
+      <td>RL</td>
+      <td>Pave</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>Crawfor</td>
+      <td>Norm</td>
+      <td>Norm</td>
+      <td>...</td>
+      <td>Gd</td>
+      <td>Stone</td>
+      <td>GasA</td>
+      <td>Ex</td>
+      <td>Y</td>
+      <td>Gd</td>
+      <td>Typ</td>
+      <td>Y</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+    <tr>
+      <th>1459</th>
+      <td>RL</td>
+      <td>Pave</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>NAmes</td>
+      <td>Norm</td>
+      <td>Norm</td>
+      <td>...</td>
+      <td>TA</td>
+      <td>CBlock</td>
+      <td>GasA</td>
+      <td>Gd</td>
+      <td>Y</td>
+      <td>Gd</td>
+      <td>Typ</td>
+      <td>Y</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+    <tr>
+      <th>1460</th>
+      <td>RL</td>
+      <td>Pave</td>
+      <td>Reg</td>
+      <td>Lvl</td>
+      <td>AllPub</td>
+      <td>Inside</td>
+      <td>Gtl</td>
+      <td>Edwards</td>
+      <td>Norm</td>
+      <td>Norm</td>
+      <td>...</td>
+      <td>TA</td>
+      <td>CBlock</td>
+      <td>GasA</td>
+      <td>Gd</td>
+      <td>Y</td>
+      <td>TA</td>
+      <td>Typ</td>
+      <td>Y</td>
+      <td>WD</td>
+      <td>Normal</td>
+    </tr>
+  </tbody>
+</table>
+<p>1460 rows × 27 columns</p>
+</div>
+
+
+
+
+```python
+# __SOLUTION__
+# That is still a lot of options. What if we look for options where there are
+# only a few different unique categories?
+ames.select_dtypes("object").nunique().sort_values()
+```
+
+
+
+
+    Street            2
+    Utilities         2
+    CentralAir        2
+    LandSlope         3
+    PavedDrive        3
+    LotShape          4
+    LandContour       4
+    KitchenQual       4
+    ExterQual         4
+    MSZoning          5
+    LotConfig         5
+    BldgType          5
+    HeatingQC         5
+    ExterCond         5
+    Heating           6
+    Foundation        6
+    SaleCondition     6
+    RoofStyle         6
+    Functional        7
+    HouseStyle        8
+    Condition2        8
+    RoofMatl          8
+    SaleType          9
+    Condition1        9
+    Exterior1st      15
+    Exterior2nd      16
+    Neighborhood     25
+    dtype: int64
+
+
+
+
+```python
+# __SOLUTION__
+# LotShape looks good, since there's a good amount of homes in
+# multiple categories
+ames["LotShape"].value_counts()
+```
+
+
+
+
+    Reg    925
+    IR1    484
+    IR2     41
+    IR3     10
+    Name: LotShape, dtype: int64
+
+
+
+
+```python
+# __SOLUTION__
+# Let's plot LotShape
+ames.groupby("LotShape").mean().sort_index().plot.bar(y="SalePrice");
+```
+
+
+    
+![png](index_files/index_28_0.png)
+    
+
+
+
+```python
+# __SOLUTION__
+# That looks like a good categorical predictor. Even though
+# some of the values have numbers in them, they don't seem to
+# be linearly related
+```
+
+### Discrete Categorical Predictor
+
+
+```python
+# Your code here - discrete categorical predictor
+
+```
+
+
+```python
+# __SOLUTION__
+# Let's do the same process of looking for the number of unique
+# values, except for numeric columns
+ames.select_dtypes("number").nunique().sort_values()
+```
+
+
+
+
+    HalfBath            3
+    BsmtHalfBath        3
+    FullBath            4
+    Fireplaces          4
+    KitchenAbvGr        4
+    BsmtFullBath        4
+    GarageCars          5
+    YrSold              5
+    PoolArea            8
+    BedroomAbvGr        8
+    OverallCond         9
+    OverallQual        10
+    MoSold             12
+    TotRmsAbvGrd       12
+    MSSubClass         15
+    3SsnPorch          20
+    MiscVal            21
+    LowQualFinSF       24
+    YearRemodAdd       61
+    ScreenPorch        76
+    YearBuilt         112
+    EnclosedPorch     120
+    BsmtFinSF2        144
+    OpenPorchSF       202
+    WoodDeckSF        274
+    2ndFlrSF          417
+    GarageArea        441
+    BsmtFinSF1        637
+    SalePrice         663
+    TotalBsmtSF       721
+    1stFlrSF          753
+    BsmtUnfSF         780
+    GrLivArea         861
+    LotArea          1073
+    dtype: int64
+
+
+
+
+```python
+# __SOLUTION__
+# Hmm, most of those with relatively few categories look like they are actually numeric
+
+# Let's actually go back to earlier, when we said that MSSubClass and OverallCond were
+# not numeric
+
+fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12,5))
+
+ames.groupby("MSSubClass").mean().plot.bar(y="SalePrice", ax=ax1)
+ames.groupby("OverallCond").mean().plot.bar(y="SalePrice", ax=ax2);
+```
+
+
+    
+![png](index_files/index_33_0.png)
+    
+
+
+
+```python
+# __SOLUTION__
+# MSSubClass looks least like it could be used as a numeric predictor, so
+# let's go with that
+```
+
+## Step 3: Build a Multiple Regression Model with Your Chosen Predictors
+
+Choose the best-looking 3 out of 4 predictors to include in your model.
+
+Make sure that you one-hot encode your categorical predictor(s) (regardless of whether the current data type is a string or number) first!
+
+
+```python
+# Your code here - prepare X and y, including one-hot encoding
+
+```
+
+
+```python
+# __SOLUTION__
+# MSSubClass is messiest, so exclude that
+y = ames["SalePrice"]
+X = ames[["GrLivArea", "OverallQual", "LotShape"]]
+X
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>GrLivArea</th>
+      <th>OverallQual</th>
+      <th>LotShape</th>
+    </tr>
+    <tr>
+      <th>Id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>1710</td>
+      <td>7</td>
+      <td>Reg</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1262</td>
+      <td>6</td>
+      <td>Reg</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1786</td>
+      <td>7</td>
+      <td>IR1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1717</td>
+      <td>7</td>
+      <td>IR1</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>2198</td>
+      <td>8</td>
+      <td>IR1</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1456</th>
+      <td>1647</td>
+      <td>6</td>
+      <td>Reg</td>
+    </tr>
+    <tr>
+      <th>1457</th>
+      <td>2073</td>
+      <td>6</td>
+      <td>Reg</td>
+    </tr>
+    <tr>
+      <th>1458</th>
+      <td>2340</td>
+      <td>7</td>
+      <td>Reg</td>
+    </tr>
+    <tr>
+      <th>1459</th>
+      <td>1078</td>
+      <td>5</td>
+      <td>Reg</td>
+    </tr>
+    <tr>
+      <th>1460</th>
+      <td>1256</td>
+      <td>5</td>
+      <td>Reg</td>
+    </tr>
+  </tbody>
+</table>
+<p>1460 rows × 3 columns</p>
+</div>
+
+
+
+
+```python
+# __SOLUTION__
+X = pd.get_dummies(X, columns=["LotShape"], drop_first=True)
+X
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>GrLivArea</th>
+      <th>OverallQual</th>
+      <th>LotShape_IR2</th>
+      <th>LotShape_IR3</th>
+      <th>LotShape_Reg</th>
+    </tr>
+    <tr>
+      <th>Id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>1710</td>
+      <td>7</td>
       <td>0</td>
       <td>0</td>
       <td>1</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>3</td>
-      <td>60</td>
-      <td>68.0</td>
-      <td>11250</td>
-      <td>NaN</td>
-      <td>IR1</td>
-      <td>Lvl</td>
-      <td>AllPub</td>
-      <td>Inside</td>
-      <td>Gtl</td>
-      <td>...</td>
+      <td>1262</td>
+      <td>6</td>
       <td>0</td>
       <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>1</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>4</td>
-      <td>70</td>
-      <td>60.0</td>
-      <td>9550</td>
-      <td>NaN</td>
-      <td>IR1</td>
-      <td>Lvl</td>
-      <td>AllPub</td>
-      <td>Corner</td>
-      <td>Gtl</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>1786</td>
+      <td>7</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>5</td>
-      <td>60</td>
-      <td>84.0</td>
-      <td>14260</td>
-      <td>NaN</td>
-      <td>IR1</td>
-      <td>Lvl</td>
-      <td>AllPub</td>
-      <td>FR2</td>
-      <td>Gtl</td>
-      <td>...</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+      <td>1717</td>
+      <td>7</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
     </tr>
+    <tr>
+      <th>5</th>
+      <td>2198</td>
+      <td>8</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1456</th>
+      <td>1647</td>
+      <td>6</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1457</th>
+      <td>2073</td>
+      <td>6</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1458</th>
+      <td>2340</td>
+      <td>7</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1459</th>
+      <td>1078</td>
+      <td>5</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1460</th>
+      <td>1256</td>
+      <td>5</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
   </tbody>
 </table>
-<p>5 rows × 119 columns</p>
+<p>1460 rows × 5 columns</p>
 </div>
+
+
+
+
+```python
+# Your answer here - which category or categories were dropped?
+
+```
+
+
+```python
+# __SOLUTION__
+"""
+LotShape IR1 (slightly irregular)
+"""
+```
+
+
+```python
+# Your code here - build a regression model and display results
+
+```
+
+
+```python
+# __SOLUTION__
+import statsmodels.api as sm
+
+model = sm.OLS(y, sm.add_constant(X))
+results = model.fit()
+
+print(results.summary())
+```
+
+                                OLS Regression Results                            
+    ==============================================================================
+    Dep. Variable:              SalePrice   R-squared:                       0.723
+    Model:                            OLS   Adj. R-squared:                  0.722
+    Method:                 Least Squares   F-statistic:                     759.4
+    Date:                Wed, 11 May 2022   Prob (F-statistic):               0.00
+    Time:                        18:38:05   Log-Likelihood:                -17607.
+    No. Observations:                1460   AIC:                         3.523e+04
+    Df Residuals:                    1454   BIC:                         3.526e+04
+    Df Model:                           5                                         
+    Covariance Type:            nonrobust                                         
+    ================================================================================
+                       coef    std err          t      P>|t|      [0.025      0.975]
+    --------------------------------------------------------------------------------
+    const         -8.92e+04   5574.151    -16.002      0.000      -1e+05   -7.83e+04
+    GrLivArea       54.5636      2.613     20.881      0.000      49.438      59.689
+    OverallQual   3.213e+04    990.676     32.429      0.000    3.02e+04    3.41e+04
+    LotShape_IR2  1.407e+04   6822.693      2.062      0.039     683.451    2.75e+04
+    LotShape_IR3  -2.84e+04   1.34e+04     -2.116      0.035   -5.47e+04   -2070.141
+    LotShape_Reg -1.376e+04   2396.494     -5.742      0.000   -1.85e+04   -9059.887
+    ==============================================================================
+    Omnibus:                      366.932   Durbin-Watson:                   1.982
+    Prob(Omnibus):                  0.000   Jarque-Bera (JB):             8050.129
+    Skew:                           0.620   Prob(JB):                         0.00
+    Kurtosis:                      14.437   Cond. No.                     1.97e+04
+    ==============================================================================
+    
+    Notes:
+    [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+    [2] The condition number is large, 1.97e+04. This might indicate that there are
+    strong multicollinearity or other numerical problems.
+
+
+## Step 4: Create Partial Regression Plots for Features
+
+For each feature of the regression above (including the dummy features), plot the partial regression.
+
+
+```python
+# Your code here - create partial regression plots
+
+```
+
+
+```python
+# __SOLUTION__
+fig = plt.figure(figsize=(15,10))
+sm.graphics.plot_partregress_grid(
+    results,
+    exog_idx=list(X.columns),
+    grid=(2,3),
+    fig=fig)
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](index_files/index_45_0.png)
+    
+
+
+## Step 5: Calculate an Error-Based Metric
+
+In addition to the adjusted R-Squared that we can see in the model summary, calculate either MAE or RMSE for this model.
+
+
+```python
+# Your code here - calculate an error-based metric
+
+```
+
+
+```python
+# __SOLUTION__
+from sklearn.metrics import mean_absolute_error
+
+y_pred = results.predict(sm.add_constant(X))
+mean_absolute_error(y, y_pred)
+```
+
+
+
+
+    28396.050798992394
+
+
+
+## Step 6: Summarize Findings
+
+Between the model results, partial regression plots, and error-based metric, what does this model tell you? What would your next steps be to improve the model?
+
+
+```python
+# Your answer here
+
+```
+
+
+```python
+# __SOLUTION__
+"""
+Our model is statistically significant overall, and explains about 72% of the
+variance in SalePrice. On average it is off by about $28k in its predictions
+of home price.
+
+All of our coefficients are statistically significant
+
+So we can say that:
+
+const: When above-grade living area is 0, overall quality is 0, and lot shape
+       is slightly irregular, we would expect a home sale price of -$89k
+       
+GrLivArea: For each increase of 1 sqft in above-grade living area, we see an
+           associated increase of about $55 in sale price
+
+OverallQual: For each increase of 1 in overall quality, we see an associated
+             increase of about $32k in sale price
+
+LotShape_IR2: Compared to a slightly irregular lot shape, we see an associated
+              increase of about $14k for a moderately irregular lot shape
+
+LotShape_IR3: Compared to a slightly irregular lot shape, we see an associated
+              decrease of about $28k for an irregular lot shape
+
+LotShape_Reg: Compared to a slightly irregular lot shape, we see an associated
+              decrease of about $14k for a regular lot shape
+
+Looking at the partial regression plots, the dummy variables look fairly
+different from the other variables. They tend to have two clusters rather than
+a continuous "cloud". Given the relatively small numbers in IR2 and IR3, I
+wonder if a better model would have these binned together with IR1 instead.
+"""
+```
+
+## Level Up (Optional)
+
+Try transforming X using scikit-learn _and_ fitting a scikit-learn linear regression as well. If there are any differences in the result, investigate them.
+
+
+```python
+# Your code here
+```
+
+
+```python
+# __SOLUTION__
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.linear_model import LinearRegression
+```
+
+
+```python
+# __SOLUTION__
+X_sklearn = ames[["GrLivArea", "OverallQual", "LotShape"]].copy()
+X_cat = X_sklearn[["LotShape"]]
+X_numeric = X_sklearn.drop("LotShape", axis=1)
+
+ohe = OneHotEncoder(drop="first", sparse=False)
+ohe.fit(X_cat)
+X_cat_ohe = pd.DataFrame(
+    data=ohe.transform(X_cat),
+    columns=[f"LotShape_{cat}" for cat in ohe.categories_[0][1:]],
+    index=X_cat.index
+)
+X_cat_ohe
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>LotShape_IR2</th>
+      <th>LotShape_IR3</th>
+      <th>LotShape_Reg</th>
+    </tr>
+    <tr>
+      <th>Id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1456</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1457</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1458</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1459</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1460</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>1460 rows × 3 columns</p>
+</div>
+
+
+
+
+```python
+# __SOLUTION__
+X_sklearn_final = pd.concat([X_numeric, X_cat_ohe], axis=1)
+X_sklearn_final
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>GrLivArea</th>
+      <th>OverallQual</th>
+      <th>LotShape_IR2</th>
+      <th>LotShape_IR3</th>
+      <th>LotShape_Reg</th>
+    </tr>
+    <tr>
+      <th>Id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>1710</td>
+      <td>7</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1262</td>
+      <td>6</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1786</td>
+      <td>7</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1717</td>
+      <td>7</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>2198</td>
+      <td>8</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1456</th>
+      <td>1647</td>
+      <td>6</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1457</th>
+      <td>2073</td>
+      <td>6</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1458</th>
+      <td>2340</td>
+      <td>7</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1459</th>
+      <td>1078</td>
+      <td>5</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1460</th>
+      <td>1256</td>
+      <td>5</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>1460 rows × 5 columns</p>
+</div>
+
+
+
+
+```python
+# __SOLUTION__
+lr = LinearRegression()
+lr.fit(X_sklearn_final, y)
+```
+
+
+
+
+    LinearRegression()
+
+
+
+
+```python
+# __SOLUTION__
+import numpy as np
+print(results.params.values)
+print(np.append(lr.intercept_, lr.coef_))
+```
+
+    [-8.91984448e+04  5.45636496e+01  3.21262730e+04  1.40668251e+04
+     -2.84021192e+04 -1.37608433e+04]
+    [-8.91984448e+04  5.45636496e+01  3.21262730e+04  1.40668251e+04
+     -2.84021192e+04 -1.37608433e+04]
+
+
+
+```python
+# __SOLUTION__
+mean_absolute_error(y, lr.predict(X_sklearn_final))
+```
+
+
+
+
+    28396.050798992903
 
 
 
 ## Summary
 
-In this lab, you practiced your knowledge of categorical variables on the Ames Housing dataset! Specifically, you practiced distinguishing continuous and categorical data. You then created dummy variables using one hot encoding.
+In this lab, you practiced your knowledge of categorical variables on the Ames Housing dataset! Specifically, you practiced distinguishing numeric and categorical data. You then created dummy variables using one hot encoding in order to build a multiple regression model.
