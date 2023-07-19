@@ -1,5 +1,10 @@
 # Dealing with Categorical Variables - Lab
 
+
+```python
+
+```
+
 ## Introduction
 
 In this lab, you'll explore the Ames Housing dataset and identify numeric and categorical variables. Then you'll transform some categorical data and use it in a multiple regression model.
