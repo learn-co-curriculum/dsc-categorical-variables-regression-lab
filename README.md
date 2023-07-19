@@ -1559,25 +1559,13 @@ ames["LotShape"].value_counts()
 
 
 ```python
-# lets plot Lot Shape
-ames["LotShape"].value_counts().plot.bar();
+# Let's plot LotShape
+ames.groupby('LotShape').mean('LotShape').sort_index().plot.bar(y='SalePrice');
 ```
 
 
     
 ![png](index_files/index_22_0.png)
-    
-
-
-
-```python
-# lets plot Lot Shape by sale price
-ames.plot.scatter(x="LotShape", y="SalePrice");
-```
-
-
-    
-![png](index_files/index_23_0.png)
     
 
 
@@ -1647,19 +1635,19 @@ ames.select_dtypes("number").nunique().sort_values()
 
 fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12,5))
 
-ames.plot.scatter(x="OverallQual", y="SalePrice", ax=ax1)
-ames.plot.scatter(x="OverallCond", y="SalePrice", ax=ax2);
+ames.groupby('MSSubClass').mean('MSSubClass').plot.bar(y='SalePrice', ax=ax1)
+ames.groupby('OverallCond').mean('OverallCond').plot.bar(y='SalePrice', ax=ax2);
 ```
 
 
     
-![png](index_files/index_27_0.png)
+![png](index_files/index_26_0.png)
     
 
 
 
 ```python
-# OverallQual looks least like it could be used as a numeric predictor, so
+# MSSubClass looks least like it could be used as a numeric predictor, so
 # let's go with that
 ```
 
@@ -1785,7 +1773,7 @@ X
 
 
 ```python
-X = pd.get_dummies(X, columns=["LotShape"], drop_first=True).astype(int)
+X = pd.get_dummies(X, columns=["LotShape"], drop_first=True, dtype=int)
 X
 ```
 
@@ -1937,12 +1925,6 @@ LotShape IR1 (slightly irregular)
 
 
 ```python
-# uncomment and run this cell only once to install statsmodels
-# !pip install statsmodels
-```
-
-
-```python
 import statsmodels.api as sm
 
 model = sm.OLS(y, sm.add_constant(X))
@@ -1956,8 +1938,8 @@ print(results.summary())
     Dep. Variable:              SalePrice   R-squared:                       0.723
     Model:                            OLS   Adj. R-squared:                  0.722
     Method:                 Least Squares   F-statistic:                     759.4
-    Date:                Thu, 13 Apr 2023   Prob (F-statistic):               0.00
-    Time:                        14:33:54   Log-Likelihood:                -17607.
+    Date:                Wed, 19 Jul 2023   Prob (F-statistic):               0.00
+    Time:                        14:11:27   Log-Likelihood:                -17607.
     No. Observations:                1460   AIC:                         3.523e+04
     Df Residuals:                    1454   BIC:                         3.526e+04
     Df Model:                           5                                         
@@ -2000,16 +1982,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-    eval_env: 1
-    eval_env: 1
-    eval_env: 1
-    eval_env: 1
-    eval_env: 1
-
-
 
     
-![png](index_files/index_36_1.png)
+![png](index_files/index_34_0.png)
     
 
 
@@ -2028,7 +2003,7 @@ mean_absolute_error(y, y_pred)
 
 
 
-    28396.050798992368
+    28396.050798992375
 
 
 
@@ -2038,39 +2013,46 @@ Between the model results, partial regression plots, and error-based metric, wha
 
 
 ```python
-# """
-# Our model is statistically significant overall, and explains about 72% of the
-# variance in SalePrice. On average it is off by about $28k in its predictions
-# of home price.
+"""
+Our model is statistically significant overall, and explains about 72% of the
+variance in SalePrice. On average it is off by about $28k in its predictions
+of home price.
 
-# All of our coefficients are statistically significant
+All of our coefficients are statistically significant
 
-# So we can say that:
+So we can say that:
 
-# const: When above-grade living area is 0, overall quality is 0, and lot shape
-#        is slightly irregular, we would expect a home sale price of -$89k
+const: When above-grade living area is 0, overall quality is 0, and lot shape
+       is slightly irregular, we would expect a home sale price of -$89k
        
-# GrLivArea: For each increase of 1 sqft in above-grade living area, we see an
-#            associated increase of about $55 in sale price
+GrLivArea: For each increase of 1 sqft in above-grade living area, we see an
+           associated increase of about $55 in sale price
 
-# OverallQual: For each increase of 1 in overall quality, we see an associated
-#              increase of about $32k in sale price
+OverallQual: For each increase of 1 in overall quality, we see an associated
+             increase of about $32k in sale price
 
-# LotShape_IR2: Compared to a slightly irregular lot shape, we see an associated
-#               increase of about $14k for a moderately irregular lot shape
+LotShape_IR2: Compared to a slightly irregular lot shape, we see an associated
+              increase of about $14k for a moderately irregular lot shape
 
-# LotShape_IR3: Compared to a slightly irregular lot shape, we see an associated
-#               decrease of about $28k for an irregular lot shape
+LotShape_IR3: Compared to a slightly irregular lot shape, we see an associated
+              decrease of about $28k for an irregular lot shape
 
-# LotShape_Reg: Compared to a slightly irregular lot shape, we see an associated
-#               decrease of about $14k for a regular lot shape
+LotShape_Reg: Compared to a slightly irregular lot shape, we see an associated
+              decrease of about $14k for a regular lot shape
 
-# Looking at the partial regression plots, the dummy variables look fairly
-# different from the other variables. They tend to have two clusters rather than
-# a continuous "cloud". Given the relatively small numbers in IR2 and IR3, I
-# wonder if a better model would have these binned together with IR1 instead.
-# """
+Looking at the partial regression plots, the dummy variables look fairly
+different from the other variables. They tend to have two clusters rather than
+a continuous "cloud". Given the relatively small numbers in IR2 and IR3, I
+wonder if a better model would have these binned together with IR1 instead.
+"""
 ```
+
+
+
+
+    '\nOur model is statistically significant overall, and explains about 72% of the\nvariance in SalePrice. On average it is off by about $28k in its predictions\nof home price.\n\nAll of our coefficients are statistically significant\n\nSo we can say that:\n\nconst: When above-grade living area is 0, overall quality is 0, and lot shape\n       is slightly irregular, we would expect a home sale price of -$89k\n       \nGrLivArea: For each increase of 1 sqft in above-grade living area, we see an\n           associated increase of about $55 in sale price\n\nOverallQual: For each increase of 1 in overall quality, we see an associated\n             increase of about $32k in sale price\n\nLotShape_IR2: Compared to a slightly irregular lot shape, we see an associated\n              increase of about $14k for a moderately irregular lot shape\n\nLotShape_IR3: Compared to a slightly irregular lot shape, we see an associated\n              decrease of about $28k for an irregular lot shape\n\nLotShape_Reg: Compared to a slightly irregular lot shape, we see an associated\n              decrease of about $14k for a regular lot shape\n\nLooking at the partial regression plots, the dummy variables look fairly\ndifferent from the other variables. They tend to have two clusters rather than\na continuous "cloud". Given the relatively small numbers in IR2 and IR3, I\nwonder if a better model would have these binned together with IR1 instead.\n'
+
+
 
 ## Level Up (Optional)
 
@@ -2351,7 +2333,7 @@ lr.fit(X_sklearn_final, y)
 
 
 
-<style>#sk-container-id-1 {color: black;background-color: white;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>LinearRegression()</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">LinearRegression</label><div class="sk-toggleable__content"><pre>LinearRegression()</pre></div></div></div></div></div>
+<style>#sk-container-id-1 {color: black;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>LinearRegression()</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">LinearRegression</label><div class="sk-toggleable__content"><pre>LinearRegression()</pre></div></div></div></div></div>
 
 
 
