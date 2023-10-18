@@ -733,7 +733,7 @@ Using this file as well as `pandas` techniques, identify the following predictor
 
 For each of these predictors, visualize the relationship between the predictor and `SalePrice` using an appropriate plot.
 
-Finding these will take some digging -- don't be discouraged if they're not immediately obvious! The Ames Housing dataset is a lot more complex than the Auto MPG dataset. There is also no single right answer here.
+Finding these will take some digging -- don't be discouraged if they're not immediately obvious. The Ames Housing dataset is a lot more complex than the Auto MPG dataset. There is also no single right answer here.
 
 ### Continuous Numeric Predictor
 
@@ -1655,7 +1655,7 @@ ames.groupby('OverallCond').mean('OverallCond').plot.bar(y='SalePrice', ax=ax2);
 
 Choose the best-looking 3 out of 4 predictors to include in your model.
 
-Make sure that you one-hot encode your categorical predictor(s) (regardless of whether the current data type is a string or number) first!
+Make sure that you one-hot encode your categorical predictor(s) (regardless of whether the current data type is a string or number) first.
 
 
 ```python
